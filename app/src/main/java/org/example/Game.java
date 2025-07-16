@@ -91,7 +91,7 @@ public class Game {
         }
     }
 
-    private void printStatistics() {
+    public void printStatistics() {
         System.out.println("Current Log:");
         System.out.println("Player " + player1 + " Wins: " + player1Wins);
         System.out.println("Player " + player2 + " Wins: " + player2Wins);
@@ -99,7 +99,7 @@ public class Game {
         System.out.println();
     }
 
-    private void saveStatisticsToFile() {
+    public void saveStatisticsToFile() {
         try (PrintWriter writer = new PrintWriter("game_log.txt")) {
             writer.println("Game Log:");
             writer.println("Player " + player1 + " Wins: " + player1Wins);
