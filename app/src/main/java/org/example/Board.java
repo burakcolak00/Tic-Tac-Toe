@@ -33,9 +33,9 @@ public class Board {
 
     public boolean checkWin() {
         int[][] winIndices = {
-            {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, // rows
-            {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, // columns
-            {0, 4, 8}, {2, 4, 6}             // diagonals
+                { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }, // rows
+                { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 }, // columns
+                { 0, 4, 8 }, { 2, 4, 6 } // diagonals
         };
         for (int[] line : winIndices) {
             String a = cells[line[0]];
@@ -55,5 +55,36 @@ public class Board {
             }
         }
         return true;
+    }
+
+    public boolean isEmpty() {
+        for (String cell : cells) {
+            if (!cell.equals(" ")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isCenterOfTheBoardEmpty() {
+        return cells[4].equals(" ");
+    }
+
+    public boolean isCellEmpty(int i) {
+        return cells[i].equals(" ");
+    }
+
+    public int getMoveCount() {
+        int count = 0;
+        for (int i = 0; i < 9; i++) {
+            if (!cells[i].equals(" ")) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void setCell(int index, String symbol) {
+        cells[index] = symbol;
     }
 }

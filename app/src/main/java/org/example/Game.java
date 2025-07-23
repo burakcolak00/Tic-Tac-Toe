@@ -8,11 +8,13 @@ public class Game {
     private Board board;
     private boolean turn; // false = X, true = O
     private Scanner scanner;
-    private final String player1 = "X";
-    private final String player2 = "O";
+    private final String PLAYER_1 = "X";
+    private final String PLAYER_2 = "O";
     private int player1Wins = 0;
     private int player2Wins = 0;
     private int ties = 0;
+    private Computer computer;
+    private int gameMode;
 
     public Game() {
         board = new Board();
@@ -21,9 +23,28 @@ public class Game {
     }
 
     public void start() {
+        gameMode = askForGameMode();
+
+        if (gameMode == 1) {
+            System.out.println("Starting Human vs. Human game...");
+        } else if (gameMode == 2) {
+            System.out.println("Starting Human vs. Computer game...");
+            computer = new Computer(this, PLAYER_2);
+        } else {
+            System.out.println("Starting Computer vs. Human game...");
+            computer = new Computer(this, PLAYER_1);
+        }
+
         while (true) {
             board.print();
-            getInput();
+            if ((gameMode == 1) ||
+                (gameMode == 2 && !turn) || // Human's turn in HvC
+                (gameMode == 3 && turn)) {  // Human's turn in CvH
+                getInput();
+            } else {
+                System.out.println("\nComputer (" + (turn ? PLAYER_2 : PLAYER_1) + ") is making a move...");
+                computer.move();
+            }
             if (board.checkWin() || board.isFull()) {
                 board.print();
                 announceResult();
@@ -31,7 +52,6 @@ public class Game {
                     System.out.println("Thanks for playing!");
                     break;
                 }
-                board.reset();
             } else {
                 switchTurn();
             }
@@ -40,7 +60,7 @@ public class Game {
 
     private void getInput() {
         while (true) {
-            System.out.print("\nPlayer " + (turn ? player2 : player1) + ", enter your move (1-9): ");
+            System.out.print("\nPlayer " + (turn ? PLAYER_2 : PLAYER_1) + ", enter your move (1-9): ");
             try {
                 String input = scanner.nextLine().trim();
                 int move = Integer.parseInt(input) - 1;
@@ -48,7 +68,7 @@ public class Game {
                     System.out.println("Invalid move. Please enter a number between 1 and 9.");
                     continue;
                 }
-                if (!board.placeMove(move, turn ? player2 : player1)) {
+                if (!board.placeMove(move, turn ? PLAYER_2 : PLAYER_1)) {
                     System.out.println("That space is already taken. Try again.");
                     continue;
                 }
@@ -61,7 +81,7 @@ public class Game {
 
     private void announceResult() {
         if (board.checkWin()) {
-            System.out.println("\nPlayer " + (turn ? player2 : player1) + " wins!\n");
+            System.out.println("\nPlayer " + (turn ? PLAYER_2 : PLAYER_1) + " wins!\n");
             if (turn) {
                 player2Wins++;
             } else {
@@ -93,8 +113,8 @@ public class Game {
 
     public void printStatistics() {
         System.out.println("Current Log:");
-        System.out.println("Player " + player1 + " Wins: " + player1Wins);
-        System.out.println("Player " + player2 + " Wins: " + player2Wins);
+        System.out.println("Player " + PLAYER_1 + " Wins: " + player1Wins);
+        System.out.println("Player " + PLAYER_2 + " Wins: " + player2Wins);
         System.out.println("Ties: " + ties);
         System.out.println();
     }
@@ -102,8 +122,8 @@ public class Game {
     public void saveStatisticsToFile() {
         try (PrintWriter writer = new PrintWriter("game_log.txt")) {
             writer.println("Game Log:");
-            writer.println("Player " + player1 + " Wins: " + player1Wins);
-            writer.println("Player " + player2 + " Wins: " + player2Wins);
+            writer.println("Player " + PLAYER_1 + " Wins: " + player1Wins);
+            writer.println("Player " + PLAYER_2 + " Wins: " + player2Wins);
             writer.println("Ties: " + ties);
             System.out.println("Game log saved to game_log.txt");
         } catch (IOException e) {
@@ -115,4 +135,32 @@ public class Game {
         turn = !turn;
     }
 
+    private int askForGameMode() {
+        System.out.println("What kind of game would you like to play?\n");
+
+        System.out.println("1. Human vs. Human");
+        System.out.println("2. Human vs. Computer");
+        System.out.println("3. Computer vs. Human\n");
+
+        System.out.println("What is your selection? (1/2/3)");
+        String selection = scanner.nextLine().trim();
+
+        while (!selection.equals("1") && !selection.equals("2") && !selection.equals("3")) {
+            System.out.println("Invalid selection. Please enter 1, 2, or 3.");
+            selection = scanner.nextLine().trim();
+        }
+        return Integer.parseInt(selection);
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public boolean isTurn() {
+        return turn;
+    }
+
+    public int getGameMode() {
+        return gameMode;
+    }
 }
