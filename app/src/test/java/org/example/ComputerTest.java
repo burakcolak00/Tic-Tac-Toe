@@ -6,13 +6,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ComputerTest {
 
-    private Board board;
     private Game game;
     private Computer computer;
 
     @BeforeEach
     void setUp() {
-        board = new Board();
         game = new Game();
         // Inject our test board into the game
         // This requires a setter or reflection if Game doesn't support it.
